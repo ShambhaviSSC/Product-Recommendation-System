@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<section id="showcase-inner" class="showcase-search text-white py-5">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-12">
+          <form action="{% url 'search' %}">
+            <!-- Form Row 1 -->
+            <div class="form-row">
+              <div class="col-md-4 mb-3">
+                <label class="sr-only">Keywords</label>
+                <input type="text" name="keywords" class="form-control" placeholder="Keyword (Fastest, Smartest, etc)" vlaue="{{ values.keywords }}">
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="sr-only">RAM</label>
+                <input type="text" name="ram" class="form-control" placeholder="RAM" vlaue="{{ values.ram }}">
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="sr-only">Type</label>
+                <select name="type" class="form-control">
+                  <option selected="true" disabled="disabled">Type (All)</option>
+                  {% for key, value in type_choices.items %}
+                      <option value="{{ key }}"
+                      {% if key == values.type %}
+                        selected
+                      {% endif %}
+                      >{{value}}</option>
+                    {% endfor %}
+                </select>
+              </div>
+            </div>
+            <!-- Form Row 2 -->
+            <div class="form-row">
+              <div class="col-md-6 mb-3">
+                <label class="sr-only">Brands</label>
+                <select name="brand" class="form-control">
+                  <option selected="true" disabled="disabled">Brands (Any)</option>
+                  {% for key, value in brand_choices.items %}
+                      <option value="{{ key }}"
+                      {% if key == values.brand %}
+                        selected
+                      {% endif %}
+                      >{{value}}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <select name="price" class="form-control">
+                  <option selected="true" disabled="disabled">Max Price (All)</option>
+                  {% for key, value in price_choices.items %}
+                      <option value="{{ key }}"
+                      {% if key == values.price %}
+                        selected
+                      {% endif %}
+                      >{{value}}</option>
+                    {% endfor %}
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-block mt-4" type="submit">Submit form</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Breadcrumb -->
+  <section id="bc" class="mt-3">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="index.html">
+              <i class="fas fa-home"></i> Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="listings.html">Browse Listings</a>
+          </li>
+          <li class="breadcrumb-item active"> Search Results</li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Listings -->
+  <section id="listings" class="py-4">
+    <div class="container">
+      <div class="row">
+
+        {% if listings %}
+          {% for listing in listings %}
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="card listing-preview">
+                <img class="card-img-top" src="{{ listing.photo_main.url }}" height="350" alt="">
+                <div class="card-img-overlay">
+                  <h2>
+                    <span class="badge badge-secondary text-white">₹{{ listing.price | intcomma }}</span>
+                  </h2>
+                </div>
+                <div class="card-body">
+                  <div class="listing-heading text-center">
+                    <h4 class="text-primary">{{ listing.name }}</h4>
+                    <p>
+                      <i class="fab fa-reddit-alien text-secondary"></i> {{ listing.type }}, {{ listing.sub_type }}</p>
+                  </div>
+                  <hr>
+                  <div class="row py-2 text-secondary">
+                    <div class="col-6">
+                      <i class="fas fa-tv"></i> Display Size: {{ listing.display_size }}</div>
+                    <div class="col-6">
+                      <i class="fas fa-microchip"></i> Processor: {{ listing.processor }},{{ listing.processor_spped }}GHz</div>
+                  </div>
+                  <div class="row py-2 text-secondary">
+                    <div class="col-6">
+                      <i class="fas fa-bolt"></i> RAM: {{ listing.ram }}GB</div>
+                    <div class="col-6">
+                      <i class="fas fa-box-open"></i> Storage: {{ listing.storage }}GB</div>
+                  </div>
+                  <hr>
+                  <div class="row py-2 text-secondary">
+                    <div class="col-12">
+                      <i class="fas fa-registered"></i> {{ listing.brand }}</div>
+                  </div>
+                  <div class="row text-secondary pb-2">
+                    <div class="col-6">
+                      <i class="fas fa-clock"></i> {{ listing.list_date | timesince }}</div>
+                  </div>
+                  <hr>
+                  <a href="{% url 'listing' listing.id %}" class="btn btn-primary btn-block">More Info</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-md-12">
+            <p>No Listing Available.</p>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
